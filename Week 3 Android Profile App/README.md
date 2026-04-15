@@ -4,7 +4,7 @@ This project is a simple and modern Android profile application developed with K
 
 ## Overview
 
-The application presents personal information, academic background, and technical skills in a clean and user-friendly mobile interface.
+The application presents personal information, academic background, and technical skills in a clean and user friendly mobile interface.
 
 ## Project Purpose
 
@@ -16,7 +16,7 @@ The main purpose of this project is to practice modern Android UI development an
 - Presents personal and academic information in a structured profile card
 - Includes an About Me section
 - Lists technical skills using reusable card components
-- Uses a clean and readable single-screen design
+- Uses a clean and readable single screen design
 
 ## What I Learned
 
