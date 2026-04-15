@@ -1,4 +1,4 @@
-\# Kotlin Çalışmalarım 5.0
+# Kotlin Çalışmalarım 5.0
 
 
 
@@ -6,7 +6,7 @@ Bu repo, Kotlin öğrenme sürecimde yaptığım haftalık çalışmaların ve p
 
 
 
-\## İçerik
+## İçerik
 
 
 
@@ -22,11 +22,7 @@ Bu repo, Kotlin öğrenme sürecimde yaptığım haftalık çalışmaların ve p
 
 
 
-\## Açıklama
-
 
 
 Bu repo içinde, haftalara ve proje konularına göre düzenlenmiş Kotlin çalışmaları yer almaktadır.  
-
-Amaç, hem öğrendiklerimi düzenli şekilde toplamak hem de gelişim sürecimi proje bazlı gösterebilmektir.
 
