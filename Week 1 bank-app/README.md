@@ -1,4 +1,4 @@
-\# Bank App
+# Bank App
 
 
 
@@ -6,7 +6,7 @@ This is a simple banking application written in Kotlin.
 
 
 
-\## Features
+## Features
 
 \- Balance inquiry
 
