@@ -32,7 +32,7 @@ I learned how to:
 
 ## Project Structure
 
-This application is designed as a single-screen profile app using reusable composable components.
+This application is designed as a single screen profile app using reusable composable components.
 
 ## Screenshots
 
