@@ -2,7 +2,7 @@
 
 
 
-Bu repo, Kotlin öğrenme sürecimde yaptığım haftalık çalışmaların ve proje örneklerinin bulunduğu ana depodur.
+Bu repo içinde, haftalara ve proje konularına göre düzenlenmiş Kotlin çalışmalarım yer almaktadır.  
 
 
 
@@ -24,5 +24,5 @@ Bu repo, Kotlin öğrenme sürecimde yaptığım haftalık çalışmaların ve p
 
 
 
-Bu repo içinde, haftalara ve proje konularına göre düzenlenmiş Kotlin çalışmalarım yer almaktadır.  
+
 
