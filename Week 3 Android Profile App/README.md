@@ -1,4 +1,4 @@
-\# Android Profile Introduction App 
+\# Android Profile Introduction App
 
 
 
@@ -36,7 +36,7 @@ The aim of this project is to present personal information, academic background,
 
 Through this project, I learned how to build a modern Android user interface with Jetpack Compose.
 
-&#x20; 
+&#x20;
 
 I practiced creating reusable composable functions, organizing content with `Column`, `Row`, and `LazyColumn`, and designing a structured profile screen.
 
@@ -50,7 +50,7 @@ I also learned how to:
 
 \- separate the screen into smaller reusable components such as profile, about, and skill sections
 
-\- create a cleaner and more readable mobile interface with Material 3
+\- create a cleaner and more readable mobile interface with modern UI components
 
 \- manage and present an Android Studio project in a GitHub repository with documentation
 
