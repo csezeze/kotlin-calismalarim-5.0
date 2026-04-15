@@ -37,8 +37,8 @@ This application is designed as a single-screen profile app using reusable compo
 ## Screenshots
 
 <p align="center">
-  <img src="./screenshot1.png" alt="App Screenshot 1" width="260"/>
-  <img src="./screenshot2.png" alt="App Screenshot 2" width="260"/>
+  <img src="./screenshot1.png" alt="App Screenshot 1" width="300"/>
+  <img src="./screenshot2.png" alt="App Screenshot 2" width="300"/>
 </p>
 
 ## Developer
