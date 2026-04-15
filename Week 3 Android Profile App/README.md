@@ -36,11 +36,10 @@ This application is designed as a single-screen profile app using reusable compo
 
 ## Screenshots
 
-### Screenshot 1
-![App Screenshot 1](./screenshot1.png)
-
-### Screenshot 2
-![App Screenshot 2](./screenshot2.png)
+<p align="center">
+  <img src="./screenshot1.png" alt="App Screenshot 1" width="260"/>
+  <img src="./screenshot2.png" alt="App Screenshot 2" width="260"/>
+</p>
 
 ## Developer
 
