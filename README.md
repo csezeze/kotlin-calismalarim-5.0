@@ -24,5 +24,5 @@ Bu repo, Kotlin öğrenme sürecimde yaptığım haftalık çalışmaların ve p
 
 
 
-Bu repo içinde, haftalara ve proje konularına göre düzenlenmiş Kotlin çalışmaları yer almaktadır.  
+Bu repo içinde, haftalara ve proje konularına göre düzenlenmiş Kotlin çalışmalarım yer almaktadır.  
 
