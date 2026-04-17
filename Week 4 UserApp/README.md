@@ -22,11 +22,10 @@ The app fetches user data from the **JSONPlaceholder Users API** and displays it
 
 ## Screenshots
 
-<p align="center">
-  <img src="loading_state.png" alt="Loading State" width="30%" />
-  <img src="success_state.png.png" alt="Success State" width="30%" />
-  <img src="error_state.png.png" alt="Error State" width="30%" />
-</p>
+| Success | Error |
+|---|---|
+| <img src="screenshots/userlist_success.png" alt="Success State" width="260"/> | <img src="screenshots/userlist_error.png" alt="Error State" width="260"/> |
+| *Displays the user list successfully* | *Shows an error message and retry button* |
 
 ## States Shown
 
