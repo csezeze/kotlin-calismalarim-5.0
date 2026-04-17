@@ -23,9 +23,9 @@ The app fetches user data from the **JSONPlaceholder Users API** and displays it
 ## Screenshots
 
 <p align="center">
-  <img src="screenshots/userlist_loading.png" alt="Loading State" width="30%" />
-  <img src="screenshots/userlist_success.png" alt="Success State" width="30%" />
-  <img src="screenshots/userlist_error.png" alt="Error State" width="30%" />
+  <img src="screenshots/userlist_loading.png.png" alt="Loading State" width="30%" />
+  <img src="screenshots/userlist_success.png.png" alt="Success State" width="30%" />
+  <img src="screenshots/userlist_error.png.png" alt="Error State" width="30%" />
 </p>
 
 ## States Shown
