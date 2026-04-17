@@ -63,7 +63,3 @@ com.example.userapp/
 │   ├── screen/
 │   └── theme/
 └── viewmodel/
-
-
-
-
