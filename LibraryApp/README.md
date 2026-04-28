@@ -60,9 +60,6 @@ The app allows users to register, log in, view a digital book list, borrow books
 
 ### Borrow Rules and Final Result
 
-| Important Borrow Rule | Only Once Borrow Rule | Borrow List 2 |
+| Borrow Rule Warning | Same Book Cannot Be Borrowed Twice | Updated Borrow List |
 |---|---|---|
-| <img src="./screenshots/09-important%20rule%20borrow.png" width="220" /> | <img src="./screenshots/10-only%20once%20borrow%20same%20book%20fixed.png" width="220" /> | <img src="./screenshots/12-borrow%20list%202.png" width="220" /> |bsp;&nbsp;&nbsp;
-  <b>Only Once Borrow Rule</b> &nbsp;&nbsp;&nbsp;&nbsp;
-  <b>Updated Borrow List</b>
-</p>
+| <img src="./screenshots/09-important%20rule%20borrow.png" width="220" /> | <img src="./screenshots/10-only%20once%20borrow%20same%20book%20fixed.png" width="220" /> | <img src="./screenshots/12-borrow%20list%202.png" width="220" /> |
