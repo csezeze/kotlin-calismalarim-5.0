@@ -69,6 +69,7 @@ fun AppNavGraph() {
         composable(Screen.BookList.route) {
             BookListScreen(
                 bookViewModel = bookViewModel,
+                loanViewModel = loanViewModel,
                 onBookClick = { bookId ->
                     navController.navigate(Screen.BookDetail.createRoute(bookId))
                 },
@@ -87,6 +88,10 @@ fun AppNavGraph() {
                             launchSingleTop = true
                         }
                     }
+                },
+                onBorrowSuccess = {
+                    bookViewModel.loadBooks()
+                    myBooksViewModel.loadMyBooks()
                 }
             )
         }
