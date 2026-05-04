@@ -7,18 +7,21 @@ import io.github.jan.supabase.postgrest.postgrest
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 
+/**
+ * borrow_records tablosundan aktif kiralanan kitapları okur.
+ * Kullanıcı bu kitabı zaten aldıysa UI tarafında butonu kapatır.
+ */
 class LoanRepository {
 
     private val client = SupabaseClientProvider.client
 
-    // Artik direkt loans tablosuna insert atmiyoruz.
-    // Supabase tarafindaki guvenli borrow_book_safe function'ini cagiriyoruz.
-    suspend fun borrowBook(bookId: Long): Result<Unit> {
+    suspend fun borrowBook(bookId: Long, days: Int): Result<Unit> {
         return try {
             client.postgrest.rpc(
-                function = "borrow_book_safe",
+                function = "borrow_book_with_record",
                 parameters = buildJsonObject {
                     put("p_book_id", bookId)
+                    put("p_days", days)
                 }
             )
 
@@ -28,15 +31,36 @@ class LoanRepository {
         }
     }
 
-    // Giris yapmis kullanicinin odunc aldigi kitap kayitlarini getirir.
     suspend fun getMyLoans(): Result<List<Loan>> {
         return try {
             val loans = client
-                .from("loans")
+                .from("borrow_records")
                 .select()
                 .decodeList<Loan>()
 
             Result.success(loans)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getMyActiveBorrowedBookIds(): Result<Set<Long>> {
+        return try {
+            val activeLoans = client
+                .from("borrow_records")
+                .select {
+                    filter {
+                        eq("status", "active")
+                    }
+                }
+                .decodeList<Loan>()
+
+            val activeBookIds = activeLoans
+                .filter { it.returnedAt == null }
+                .map { it.bookId }
+                .toSet()
+
+            Result.success(activeBookIds)
         } catch (e: Exception) {
             Result.failure(e)
         }

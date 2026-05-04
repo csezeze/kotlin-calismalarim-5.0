@@ -1,5 +1,10 @@
 package com.example.libraryapp.ui.screen
-
+import java.time.Duration
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -206,10 +211,77 @@ fun BorrowedBookCard(
             Spacer(modifier = Modifier.height(10.dp))
 
             Text(
-                text = "Borrowed at: ${loan.borrowedAt ?: "Unknown"}",
+                text = "Borrowed: ${formatDateTime(loan.borrowedAt)}",
                 style = MaterialTheme.typography.bodySmall,
                 color = Color(0xFFCFD8E6)
+            )
+
+            Spacer(modifier = Modifier.height(6.dp))
+
+            Text(
+                text = "Due: ${formatDateTime(loan.dueAt)}",
+                style = MaterialTheme.typography.bodySmall,
+                color = Color(0xFFCFD8E6)
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+
+            Text(
+                text = getDaysLeftText(
+                    dueAt = loan.dueAt,
+                    status = loan.status
+                ),
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.SemiBold,
+                color = Color(0xFFB8F7D4)
             )
         }
     }
 }
+
+private fun getDaysLeftText(dueAt: String?, status: String): String {
+    if (dueAt == null) {
+        return "Due date is unknown."
+    }
+
+    if (status != "active") {
+        return "This borrowing is not active."
+    }
+
+    return try {
+        val dueDate = OffsetDateTime.parse(dueAt)
+        val now = OffsetDateTime.now(ZoneOffset.UTC)
+        val hoursLeft = Duration.between(now, dueDate).toHours()
+
+        if (hoursLeft < 0) {
+            "Late"
+        } else if (hoursLeft < 24) {
+            "Less than 1 day left"
+        } else {
+            val daysLeft = (hoursLeft + 23) / 24
+            "$daysLeft day(s) left"
+        }
+    } catch (e: Exception) {
+        "Due date cannot be calculated."
+    }
+}
+    private fun formatDateTime(dateText: String?): String {
+        if (dateText == null) {
+            return "Unknown"
+        }
+
+        return try {
+            val dateTime = OffsetDateTime.parse(dateText)
+            val turkeyTime = dateTime.atZoneSameInstant(
+                ZoneId.of("Europe/Istanbul")
+            )
+
+            val formatter = DateTimeFormatter.ofPattern(
+                "dd MMM yyyy, HH:mm",
+                Locale.ENGLISH
+            )
+
+            turkeyTime.format(formatter)
+        } catch (e: Exception) {
+            "Unknown"
+        }
+    }

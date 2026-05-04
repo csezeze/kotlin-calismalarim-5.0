@@ -100,7 +100,6 @@ fun RegisterScreen(
                     label = { Text("Full name") },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Next
                     ),
                     colors = textFieldColors
@@ -162,8 +161,8 @@ fun RegisterScreen(
                 Button(
                     onClick = {
                         authViewModel.register(
-                            fullName = fullName,
-                            email = email,
+                            fullName = fullName.trim(),
+                            email = email.trim(),
                             password = password
                         )
                     },

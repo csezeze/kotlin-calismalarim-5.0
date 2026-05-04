@@ -24,6 +24,8 @@ class MyBooksViewModel(
             _uiState.update {
                 it.copy(
                     isLoading = true,
+                    //logout sonrası eski kullanıcının kitapları görünmesin
+                    borrowedBooks = emptyList(),
                     errorMessage = null
                 )
             }
@@ -64,5 +66,8 @@ class MyBooksViewModel(
                 }
             }
         }
+    }
+    fun clearMyBooks() {
+        _uiState.value = MyBooksUiState()
     }
 }

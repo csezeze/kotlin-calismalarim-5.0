@@ -125,13 +125,15 @@ class AuthViewModel(
         }
     }
 
-    fun logout() {
+    fun logout(onLogoutFinished: () -> Unit = {}) {
         viewModelScope.launch {
             authRepository.logout()
 
             _uiState.update {
                 AuthUiState(isLoggedIn = false)
             }
+
+            onLogoutFinished()
         }
     }
 

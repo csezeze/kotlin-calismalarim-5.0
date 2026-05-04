@@ -34,10 +34,15 @@ fun AppNavGraph() {
             LoginScreen(
                 authViewModel = authViewModel,
                 onLoginSuccess = {
+                    loanViewModel.clearState()
+                    myBooksViewModel.clearMyBooks()
+                    bookViewModel.loadBooks()
+
                     navController.navigate(Screen.BookList.route) {
                         popUpTo(Screen.Login.route) {
                             inclusive = true
                         }
+                        launchSingleTop = true
                     }
                 },
                 onRegisterClick = {
@@ -71,10 +76,15 @@ fun AppNavGraph() {
                     navController.navigate(Screen.MyBooks.route)
                 },
                 onLogoutClick = {
-                    authViewModel.logout()
-                    navController.navigate(Screen.Login.route) {
-                        popUpTo(0) {
-                            inclusive = true
+                    authViewModel.logout {
+                        loanViewModel.clearState()
+                        myBooksViewModel.clearMyBooks()
+
+                        navController.navigate(Screen.Login.route) {
+                            popUpTo(Screen.BookList.route) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
                         }
                     }
                 }

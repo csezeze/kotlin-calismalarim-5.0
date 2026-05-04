@@ -4,13 +4,16 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Button
@@ -20,9 +23,14 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,7 +38,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.libraryapp.data.model.Book
 import com.example.libraryapp.ui.viewmodel.LoanViewModel
-import androidx.compose.runtime.LaunchedEffect
 
 @Composable
 fun BookDetailScreen(
@@ -40,6 +47,24 @@ fun BookDetailScreen(
     onBackClick: () -> Unit
 ) {
     val loanUiState by loanViewModel.uiState.collectAsState()
+
+    var showBorrowDialog by remember { mutableStateOf(false) }
+    var selectedDays by remember { mutableStateOf(1) }
+    val alreadyBorrowed = if (book != null) {
+        loanUiState.activeBorrowedBookIds.contains(book.id)
+    } else {
+        false
+    }
+
+    val showAlreadyBorrowedMessage = alreadyBorrowed &&
+            loanUiState.successMessage == null
+
+    LaunchedEffect(book?.id) {
+        if (book != null) {
+            loanViewModel.clearMessages()
+            loanViewModel.loadActiveBorrowedBookIds()
+        }
+    }
 
     LaunchedEffect(loanUiState.successMessage) {
         if (loanUiState.successMessage != null) {
@@ -137,6 +162,13 @@ fun BookDetailScreen(
                                 Color(0xFFFF9E9E)
                             }
                         )
+                        if (showAlreadyBorrowedMessage) {
+                            Text(
+                                text = "You already borrowed this book. Please check My Books for the due date.",
+                                color = Color(0xFFFFD166),
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
 
                         if (loanUiState.successMessage != null) {
                             Text(
@@ -158,26 +190,102 @@ fun BookDetailScreen(
 
                         Button(
                             onClick = {
-                                loanViewModel.borrowBook(book.id)
+                                if (book.availableCount > 0 && !alreadyBorrowed) {
+                                    showBorrowDialog = true
+                                }
                             },
                             enabled = !loanUiState.isLoading &&
                                     book.availableCount > 0 &&
-                                    loanUiState.successMessage == null,
+                                    !alreadyBorrowed,
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(16.dp)
                         ) {
                             if (loanUiState.isLoading) {
                                 CircularProgressIndicator(
-                                    modifier = Modifier.height(20.dp),
+                                    modifier = Modifier.size(20.dp),
                                     strokeWidth = 2.dp,
                                     color = Color.White
                                 )
                             } else {
-                                Text("Borrow Book")
+                                val buttonText = if (alreadyBorrowed) {
+                                    "Already Borrowed"
+                                } else if (book.availableCount <= 0) {
+                                    "Out of Stock"
+                                } else {
+                                    "Borrow Book"
+                                }
+
+                                Text(text = buttonText)
                             }
                         }
                     }
                 }
+            }
+
+            if (showBorrowDialog) {
+                AlertDialog(
+                    onDismissRequest = {
+                        showBorrowDialog = false
+                    },
+                    title = {
+                        Text("Borrow Book")
+                    },
+                    text = {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Text("Choose borrowing duration. Maximum is 5 days.")
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                for (day in 1..5) {
+                                    OutlinedButton(
+                                        onClick = {
+                                            selectedDays = day
+                                        }
+                                    ) {
+                                        Text(
+                                            text = if (selectedDays == day) {
+                                                "$day ✓"
+                                            } else {
+                                                "$day"
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+
+                            Text(
+                                text = "Selected: $selectedDays day(s)",
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                    },
+                    confirmButton = {
+                        Button(
+                            onClick = {
+                                loanViewModel.borrowBook(
+                                    bookId = book.id,
+                                    days = selectedDays
+                                )
+                                showBorrowDialog = false
+                            }
+                        ) {
+                            Text("Confirm")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(
+                            onClick = {
+                                showBorrowDialog = false
+                            }
+                        ) {
+                            Text("Cancel")
+                        }
+                    }
+                )
             }
         }
     }

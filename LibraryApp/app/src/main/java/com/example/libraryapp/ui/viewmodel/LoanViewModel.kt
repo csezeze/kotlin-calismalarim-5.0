@@ -16,7 +16,31 @@ class LoanViewModel(
     private val _uiState = MutableStateFlow(LoanUiState())
     val uiState: StateFlow<LoanUiState> = _uiState.asStateFlow()
 
-    fun borrowBook(bookId: Long) {
+    fun loadActiveBorrowedBookIds() {
+        viewModelScope.launch {
+            val result = loanRepository.getMyActiveBorrowedBookIds()
+
+            result.onSuccess { ids ->
+                _uiState.update {
+                    it.copy(activeBorrowedBookIds = ids)
+                }
+            }
+        }
+    }
+
+    fun borrowBook(bookId: Long, days: Int) {
+        val safeDays = days.coerceIn(1, 5)
+
+        if (_uiState.value.activeBorrowedBookIds.contains(bookId)) {
+            _uiState.update {
+                it.copy(
+                    errorMessage = "You already borrowed this book. Please check My Books.",
+                    successMessage = null
+                )
+            }
+            return
+        }
+
         viewModelScope.launch {
             _uiState.update {
                 it.copy(
@@ -26,22 +50,23 @@ class LoanViewModel(
                 )
             }
 
-            val result = loanRepository.borrowBook(bookId)
+            val result = loanRepository.borrowBook(bookId, safeDays)
 
             result.onSuccess {
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        successMessage = "Book borrowed successfully.",
-                        errorMessage = null
+                        successMessage = "Book borrowed successfully for $safeDays day(s).",
+                        errorMessage = null,
+                        activeBorrowedBookIds = it.activeBorrowedBookIds + bookId
                     )
                 }
-            }.onFailure {
+            }.onFailure { error ->
                 _uiState.update {
                     it.copy(
                         isLoading = false,
                         successMessage = null,
-                        errorMessage = "Borrowing failed. You may have already borrowed this book or no copies are available."
+                        errorMessage = getFriendlyBorrowError(error.message)
                     )
                 }
             }
@@ -56,4 +81,30 @@ class LoanViewModel(
             )
         }
     }
+
+    fun clearState() {
+        _uiState.value = LoanUiState()
+    }
+
+    private fun getFriendlyBorrowError(message: String?): String {
+        val errorText = message.orEmpty().lowercase()
+
+        return when {
+            "active borrow record" in errorText ->
+                "You already borrowed this book. Please check My Books."
+
+            "out of stock" in errorText ->
+                "This book is out of stock."
+
+            "duration" in errorText || "between 1 and 5" in errorText ->
+                "Borrow duration must be between 1 and 5 days."
+
+            "logged in" in errorText ->
+                "Please login before borrowing a book."
+
+            else ->
+                "Borrowing failed. Please try again."
+        }
+    }
+
 }
