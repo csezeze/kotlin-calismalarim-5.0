@@ -1,4 +1,5 @@
 package com.example.libraryapp.ui.screen
+
 import java.time.Duration
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
@@ -46,6 +47,13 @@ fun MyBooksScreen(
     onBackClick: () -> Unit
 ) {
     val uiState by myBooksViewModel.uiState.collectAsState()
+    val activeBorrowings = uiState.borrowedBooks.filter { borrowedBook ->
+        borrowedBook.loan.status == "active" && borrowedBook.loan.returnedAt == null
+    }
+
+    val previousBorrowings = uiState.borrowedBooks.filter { borrowedBook ->
+        !(borrowedBook.loan.status == "active" && borrowedBook.loan.returnedAt == null)
+    }
 
     LaunchedEffect(Unit) {
         myBooksViewModel.loadMyBooks()
@@ -81,7 +89,7 @@ fun MyBooksScreen(
                 )
 
                 Text(
-                    text = "${uiState.borrowedBooks.size} borrowed books",
+                    text = "${activeBorrowings.size} active, ${previousBorrowings.size} previous",
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color(0xFFB8C7D9)
                 )
@@ -149,8 +157,52 @@ fun MyBooksScreen(
                         ),
                         verticalArrangement = Arrangement.spacedBy(14.dp)
                     ) {
-                        items(uiState.borrowedBooks) { borrowedBook ->
-                            BorrowedBookCard(borrowedBook = borrowedBook)
+                        item {
+                            Text(
+                                text = "Active Borrowings",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFFB8F7D4)
+                            )
+                        }
+
+                        if (activeBorrowings.isEmpty()) {
+                            item {
+                                Text(
+                                    text = "You have no active borrowings.",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = Color(0xFFB8C7D9)
+                                )
+                            }
+                        } else {
+                            items(activeBorrowings) { borrowedBook ->
+                                BorrowedBookCard(borrowedBook = borrowedBook)
+                            }
+                        }
+
+                        item {
+                            Spacer(modifier = Modifier.height(10.dp))
+
+                            Text(
+                                text = "Previous Borrowings",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFFB8F7D4)
+                            )
+                        }
+
+                        if (previousBorrowings.isEmpty()) {
+                            item {
+                                Text(
+                                    text = "You have no previous borrowings yet.",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = Color(0xFFB8C7D9)
+                                )
+                            }
+                        } else {
+                            items(previousBorrowings) { borrowedBook ->
+                                BorrowedBookCard(borrowedBook = borrowedBook)
+                            }
                         }
                     }
                 }
@@ -264,24 +316,25 @@ private fun getDaysLeftText(dueAt: String?, status: String): String {
         "Due date cannot be calculated."
     }
 }
-    private fun formatDateTime(dateText: String?): String {
-        if (dateText == null) {
-            return "Unknown"
-        }
 
-        return try {
-            val dateTime = OffsetDateTime.parse(dateText)
-            val turkeyTime = dateTime.atZoneSameInstant(
-                ZoneId.of("Europe/Istanbul")
-            )
-
-            val formatter = DateTimeFormatter.ofPattern(
-                "dd MMM yyyy, HH:mm",
-                Locale.ENGLISH
-            )
-
-            turkeyTime.format(formatter)
-        } catch (e: Exception) {
-            "Unknown"
-        }
+private fun formatDateTime(dateText: String?): String {
+    if (dateText == null) {
+        return "Unknown"
     }
+
+    return try {
+        val dateTime = OffsetDateTime.parse(dateText)
+        val turkeyTime = dateTime.atZoneSameInstant(
+            ZoneId.of("Europe/Istanbul")
+        )
+
+        val formatter = DateTimeFormatter.ofPattern(
+            "dd MMM yyyy, HH:mm",
+            Locale.ENGLISH
+        )
+
+        turkeyTime.format(formatter)
+    } catch (e: Exception) {
+        "Unknown"
+    }
+}

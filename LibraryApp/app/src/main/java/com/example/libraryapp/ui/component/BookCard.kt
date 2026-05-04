@@ -111,14 +111,12 @@ fun BookCard(
             Spacer(modifier = Modifier.height(12.dp))
 
             if (alreadyBorrowed) {
-                Button(
-                    onClick = {},
-                    enabled = false,
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    Text("Already Borrowed")
-                }
+                Text(
+                    text = "Already Borrowed",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFFFFD166)
+                )
             } else if (book.availableCount > 0) {
                 Button(
                     onClick = {
@@ -127,11 +125,11 @@ fun BookCard(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp)
                 ) {
-                    Text("ÖDÜNÇ AL")
+                    Text(text = "Borrow Book")
                 }
             } else {
                 Text(
-                    text = "STOKTA YOK",
+                    text = "Out of Stock",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFFFF9E9E)
