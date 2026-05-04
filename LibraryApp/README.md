@@ -6,15 +6,21 @@ The app allows users to register, log in, view a digital book list, borrow books
 
 ## Features
 
+## Features
+
 - User registration with Supabase Auth
 - User login and logout
 - Book list fetched from Supabase database
 - Book detail screen
 - Borrow book feature
+- Borrow duration selection between 1 and 5 days
 - Prevents borrowing the same book more than once
 - Updates available book copy count after borrowing
+- Book cards show Borrow Book, Out of Stock, and Already Borrowed states
 - My Borrowed Books screen
-- Clean and modern Jetpack Compose UI
+- Active and previous borrowings are shown separately
+- Borrowed books show readable due dates and remaining time
+
 ---
 
 ## Technologies Used
@@ -58,8 +64,16 @@ The app allows users to register, log in, view a digital book list, borrow books
 
 ---
 
-### Borrow Rules and Final Result
+### Borrow Rules 
 
 | Borrow Rule Warning | Same Book Cannot Be Borrowed Twice | Updated Borrow List |
 |---|---|---|
 | <img src="./screenshots/09-important%20rule%20borrow.png" width="220" /> | <img src="./screenshots/10-same-book-cannot-be-borrowed-twice.png" width="220" /> | <img src="./screenshots/12-borrow%20list%202.png" width="220" /> |
+
+---
+
+### Final Borrowing Status Updates
+
+| Book List Borrow Status | Out of Stock and Already Borrowed | Active and Previous Borrowings |
+|---|---|---|
+| <img src="./screenshots/13-book-list-borrow-status-overview.png" width="220" /> | <img src="./screenshots/14-book-list-out-of-stock-and-borrowed.png" width="220" /> | <img src="./screenshots/15-my-books-active-previous.png" width="220" /> |
