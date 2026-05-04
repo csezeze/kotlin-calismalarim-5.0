@@ -1,5 +1,6 @@
 package com.example.libraryapp.ui.screen
 
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,6 +21,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -38,6 +40,7 @@ import com.example.libraryapp.data.model.Book
 import com.example.libraryapp.ui.component.BookCard
 import com.example.libraryapp.ui.viewmodel.BookViewModel
 import com.example.libraryapp.ui.viewmodel.LoanViewModel
+import java.util.Locale
 
 @Composable
 fun BookListScreen(
@@ -51,8 +54,26 @@ fun BookListScreen(
     val bookUiState by bookViewModel.uiState.collectAsState()
     val loanUiState by loanViewModel.uiState.collectAsState()
 
+    var searchText by remember { mutableStateOf("") }
     var selectedBook by remember { mutableStateOf<Book?>(null) }
     var selectedDays by remember { mutableStateOf(1) }
+
+    val searchedBooks = bookUiState.books.filter { book ->
+        if (searchText.trim().isEmpty()) {
+            true
+        } else {
+            val search = normalizeSearchText(searchText)
+            val title = normalizeSearchText(book.title)
+            val author = normalizeSearchText(book.author)
+            val category = normalizeSearchText(book.category ?: "")
+            val description = normalizeSearchText(book.description ?: "")
+
+            title.contains(search) ||
+                    author.contains(search) ||
+                    category.contains(search) ||
+                    description.contains(search)
+        }
+    }
 
     LaunchedEffect(Unit) {
         loanViewModel.clearMessages()
@@ -125,7 +146,11 @@ fun BookListScreen(
                             )
 
                             Text(
-                                text = "${bookUiState.books.size} books",
+                                text = if (searchText.trim().isEmpty()) {
+                                    "${bookUiState.books.size} books"
+                                } else {
+                                    "${searchedBooks.size} result(s)"
+                                },
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = Color(0xFFB8C7D9)
                             )
@@ -149,6 +174,31 @@ fun BookListScreen(
                         }
                     }
 
+                    OutlinedTextField(
+                        value = searchText,
+                        onValueChange = {
+                            searchText = it
+                        },
+                        label = {
+                            Text("Search book or author")
+                        },
+                        singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Color.White,
+                            cursorColor = Color.White,
+                            focusedBorderColor = Color(0xFFB8F7D4),
+                            unfocusedBorderColor = Color(0xFF6F7D91),
+                            focusedLabelColor = Color(0xFFB8F7D4),
+                            unfocusedLabelColor = Color(0xFFB8C7D9)
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp)
+                    )
+
+                    Spacer(modifier = Modifier.height(14.dp))
+
                     if (loanUiState.successMessage != null) {
                         Text(
                             text = loanUiState.successMessage ?: "",
@@ -171,29 +221,46 @@ fun BookListScreen(
                         Spacer(modifier = Modifier.height(10.dp))
                     }
 
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(
-                            start = 20.dp,
-                            end = 20.dp,
-                            bottom = 24.dp
-                        ),
-                        verticalArrangement = Arrangement.spacedBy(14.dp)
-                    ) {
-                        items(bookUiState.books) { book ->
-                            val alreadyBorrowed = loanUiState.activeBorrowedBookIds.contains(book.id)
-
-                            BookCard(
-                                book = book,
-                                alreadyBorrowed = alreadyBorrowed,
-                                onCardClick = {
-                                    onBookClick(book.id)
-                                },
-                                onBorrowClick = {
-                                    selectedDays = 1
-                                    selectedBook = book
-                                }
+                    if (searchedBooks.isEmpty()) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(24.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "No books found.",
+                                color = Color(0xFFB8C7D9),
+                                style = MaterialTheme.typography.bodyMedium
                             )
+                        }
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(
+                                start = 20.dp,
+                                end = 20.dp,
+                                bottom = 24.dp
+                            ),
+                            verticalArrangement = Arrangement.spacedBy(14.dp)
+                        ) {
+                            items(searchedBooks) { book ->
+                                val alreadyBorrowed =
+                                    loanUiState.activeBorrowedBookIds.contains(book.id)
+
+                                BookCard(
+                                    book = book,
+                                    alreadyBorrowed = alreadyBorrowed,
+                                    onCardClick = {
+                                        onBookClick(book.id)
+                                    },
+                                    onBorrowClick = {
+                                        selectedDays = 1
+                                        selectedBook = book
+                                    }
+                                )
+                            }
                         }
                     }
                 }
@@ -272,4 +339,17 @@ fun BookListScreen(
             )
         }
     }
+}
+
+private fun normalizeSearchText(text: String): String {
+    var result = text.lowercase(Locale("tr", "TR"))
+
+    result = result.replace("ç", "c")
+    result = result.replace("ğ", "g")
+    result = result.replace("ı", "i")
+    result = result.replace("ö", "o")
+    result = result.replace("ş", "s")
+    result = result.replace("ü", "u")
+
+    return result
 }

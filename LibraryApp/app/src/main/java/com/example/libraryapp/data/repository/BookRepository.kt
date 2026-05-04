@@ -1,5 +1,5 @@
 package com.example.libraryapp.data.repository
-
+import java.util.Locale
 import com.example.libraryapp.data.model.Book
 import com.example.libraryapp.data.remote.SupabaseClientProvider
 import io.github.jan.supabase.postgrest.from
@@ -25,26 +25,51 @@ class BookRepository {
     // Homework requirement: search books.
     suspend fun searchBooks(query: String): Result<List<Book>> {
         return try {
-            val trimmedQuery = query.trim()
+            val allBooksResult = getBooks()
 
-            if (trimmedQuery.isEmpty()) {
-                return getBooks()
+            if (allBooksResult.isFailure) {
+                return Result.failure(
+                    allBooksResult.exceptionOrNull() ?: Exception("Books could not be loaded.")
+                )
             }
 
-            val books = client
-                .from("books")
-                .select {
-                    filter {
-                        ilike("title", "%$trimmedQuery%")
-                    }
-                }
-                .decodeList<Book>()
+            val allBooks = allBooksResult.getOrDefault(emptyList())
+            val normalizedQuery = normalizeSearchText(query.trim())
 
-            Result.success(books)
+            if (normalizedQuery.isEmpty()) {
+                return Result.success(allBooks)
+            }
+
+            val filteredBooks = allBooks.filter { book ->
+                val title = normalizeSearchText(book.title)
+                val author = normalizeSearchText(book.author)
+                val category = normalizeSearchText(book.category ?: "")
+                val description = normalizeSearchText(book.description ?: "")
+
+                title.contains(normalizedQuery) ||
+                        author.contains(normalizedQuery) ||
+                        category.contains(normalizedQuery) ||
+                        description.contains(normalizedQuery)
+            }
+
+            Result.success(filteredBooks)
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
+    private fun normalizeSearchText(text: String): String {
+        var result = text.lowercase(Locale("tr", "TR"))
+
+        result = result.replace("ç", "c")
+        result = result.replace("ğ", "g")
+        result = result.replace("ı", "i")
+        result = result.replace("ö", "o")
+        result = result.replace("ş", "s")
+        result = result.replace("ü", "u")
+
+        return result
+    }
+
 
     // Homework requirement: update book.
     suspend fun updateBook(book: Book): Result<Unit> {
