@@ -72,6 +72,14 @@ The app allows users to register, log in, view a digital book list, borrow books
 
 ---
 
+### Search Feature
+
+| Search Bar | Search Test |
+|---|---|
+| <img src="./screenshots/16-search-bar.png" width="220" /> | <img src="./screenshots/17-test-search-bar.png" width="220" /> |
+
+---
+
 ### Final Borrowing Status Updates
 
 | Book List Borrow Status | Out of Stock and Already Borrowed | Active and Previous Borrowings |
